@@ -6,34 +6,16 @@ import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const [refresh, setRefresh] = useState(0);
-  const [selectedEmp, setSelectedEmp] = useState(null);
 
   const triggerRefresh = () => {
     setRefresh(refresh + 1);
   };
 
-  const handleEdit = (emp) => {
-    setSelectedEmp(emp);
-  };
-
-  const clearEdit = () => {
-    setSelectedEmp(null);
-  };
-
   return (
     <div style={{ padding: "30px" }}>
-      <h2>Employee Management Dashboard</h2>
-
-      {/* Form */}
-      <EmployeeForm
-        refresh={triggerRefresh}
-        selectedEmp={selectedEmp}
-        clearEdit={clearEdit}
-      />
-
-      {/* Table */}
-      <EmployeeTable refreshSignal={refresh} onEdit={handleEdit} />
-
+      <h2>Employee Management</h2>
+      <EmployeeForm refresh={triggerRefresh} />
+      <EmployeeTable refreshSignal={refresh} />
       <ToastContainer />
     </div>
   );

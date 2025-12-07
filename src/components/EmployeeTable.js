@@ -1,27 +1,13 @@
-import { useEffect, useState } from "react";
+import React from "react";
 import { API } from "../api";
 import { toast } from "react-toastify";
 
-function EmployeeTable({ refreshSignal, onEdit }) {
-  const [employees, setEmployees] = useState([]);
-
-  const loadData = async () => {
-    const res = await API.get("/all");
-    setEmployees(res.data);
-  };
-
-  useEffect(() => {
-    loadData();
-  }, [refreshSignal]);
-
-  const deleteEmp = async (id) => {
+const EmployeeTable = ({ employees, reload, onEdit }) => {
+  
+  const deleteEmployee = async (id) => {
     await API.delete(`/delete/${id}`);
     toast.info("Employee deleted");
-    loadData();
-  };
-
-  const editEmp = (emp) => {
-    onEdit(emp);
+    reload();
   };
 
   return (
@@ -31,28 +17,37 @@ function EmployeeTable({ refreshSignal, onEdit }) {
           <th>ID</th>
           <th>Name</th>
           <th>Salary</th>
-          <th>DeptID</th>
+          <th>Dept ID</th>
           <th>Action</th>
         </tr>
       </thead>
       <tbody>
-        {employees.map((e) => (
-          <tr key={e.id}>
-            <td>{e.id}</td>
-            <td>{e.empname}</td>
-            <td>{e.empSalary}</td>
-            <td>{e.departmentid}</td>
-            <td>
-              <button onClick={() => editEmp(e)}>Edit</button>
-              <button onClick={() => deleteEmp(e.id)} style={{ marginLeft: "10px" }}>
-                Delete
-              </button>
-            </td>
+        {employees.length === 0 ? (
+          <tr>
+            <td colSpan="5" align="center">No employees found</td>
           </tr>
-        ))}
+        ) : (
+          employees.map((emp) => (
+            <tr key={emp.id}>
+              <td>{emp.id}</td>
+              <td>{emp.empname}</td>
+              <td>{emp.empSalary}</td>
+              <td>{emp.departmentid}</td>
+              <td>
+                <button onClick={() => onEdit(emp)}>Edit</button>
+                <button 
+                  onClick={() => deleteEmployee(emp.id)} 
+                  style={{ marginLeft: "10px" }}
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))
+        )}
       </tbody>
     </table>
   );
-}
+};
 
 export default EmployeeTable;

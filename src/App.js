@@ -1,40 +1,25 @@
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { API } from "./api";
 import EmployeeForm from "./components/EmployeeForm";
 import EmployeeTable from "./components/EmployeeTable";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 function App() {
-  const [refresh, setRefresh] = useState(0);
-  const [selectedEmp, setSelectedEmp] = useState(null);
+  const [employees, setEmployees] = useState([]);
 
-  const triggerRefresh = () => {
-    setRefresh(refresh + 1);
+  const loadData = async () => {
+    const res = await API.get("/all");
+    setEmployees(res.data);
   };
 
-  const handleEdit = (emp) => {
-    setSelectedEmp(emp);
-  };
-
-  const clearEdit = () => {
-    setSelectedEmp(null);
-  };
+  useEffect(() => {
+    loadData();
+  }, []);
 
   return (
-    <div style={{ padding: "30px" }}>
-      <h2>Employee Management Dashboard</h2>
-
-      {/* Form */}
-      <EmployeeForm
-        refresh={triggerRefresh}
-        selectedEmp={selectedEmp}
-        clearEdit={clearEdit}
-      />
-
-      {/* Table */}
-      <EmployeeTable refreshSignal={refresh} onEdit={handleEdit} />
-
-      <ToastContainer />
+    <div>
+      <h2>Employee Manager</h2>
+      <EmployeeForm onAdded={loadData} />
+      <EmployeeTable employees={employees} reload={loadData} onEdit={(emp)=>console.log("Edit",emp)} />
     </div>
   );
 }
